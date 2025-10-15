@@ -1,0 +1,116 @@
+databaseChangeLog:
+  - changeSet:
+      id: 7
+      author: developer
+      changes:
+        - createIndex:
+            tableName: users
+            indexName: idx_users_telegram_id
+            columns:
+              - column:
+                  name: telegram_id
+        - createIndex:
+            tableName: users
+            indexName: idx_users_is_volunteer
+            columns:
+              - column:
+                  name: is_volunteer
+
+  - changeSet:
+      id: 8
+      author: developer
+      changes:
+        - createIndex:
+            tableName: pets
+            indexName: idx_pets_type
+            columns:
+              - column:
+                  name: type
+        - createIndex:
+            tableName: pets
+            indexName: idx_pets_has_disabilities
+            columns:
+              - column:
+                  name: has_disabilities
+
+  - changeSet:
+      id: 9
+      author: developer
+      changes:
+        - createIndex:
+            tableName: shelters
+            indexName: idx_shelters_type
+            columns:
+              - column:
+                  name: type
+
+  - changeSet:
+      id: 10
+      author: developer
+      changes:
+        - createIndex:
+            tableName: adopters
+            indexName: idx_adopters_shelter_id
+            columns:
+              - column:
+                  name: shelter_id
+        - createIndex:
+            tableName: adopters
+            indexName: idx_adopters_adoption_date
+            columns:
+              - column:
+                  name: adoption_date
+
+  - changeSet:
+      id: 11
+      author: developer
+      changes:
+        - createIndex:
+            tableName: trial_periods
+            indexName: idx_trial_periods_status
+            columns:
+              - column:
+                  name: status
+        - createIndex:
+            tableName: trial_periods
+            indexName: idx_trial_periods_end_date
+            columns:
+              - column:
+                  name: end_date
+        - createIndex:
+            tableName: trial_periods
+            indexName: idx_trial_periods_status_end_date
+            columns:
+              - column:
+                  name: status
+              - column:
+                  name: end_date
+
+  - changeSet:
+      id: 12
+      author: developer
+      changes:
+        - createIndex:
+            tableName: daily_reports
+            indexName: idx_daily_reports_trial_period_id
+            columns:
+              - column:
+                  name: trial_period_id
+        - createIndex:
+            tableName: daily_reports
+            indexName: idx_daily_reports_report_date
+            columns:
+              - column:
+                  name: report_date
+        - createIndex:
+            tableName: daily_reports
+            indexName: idx_daily_reports_reviewed
+            columns:
+              - column:
+                  name: reviewed
+        - createIndex:
+            tableName: daily_reports
+            indexName: idx_daily_reports_created_at
+            columns:
+              - column:
+                  name: created_at
