@@ -2,8 +2,12 @@ package pro.dev.TGBotForShelter;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import pro.dev.TGBotForShelter.config.BotProperties;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+
+@EnableConfigurationProperties(BotProperties.class)
 @SpringBootApplication
 @EnableScheduling
 public class TgBotForShelterApplication {
