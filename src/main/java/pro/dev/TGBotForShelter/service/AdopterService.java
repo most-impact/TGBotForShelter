@@ -1,17 +1,17 @@
 package pro.dev.TGBotForShelter.service;
 
-
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pro.dev.TGBotForShelter.model.Adopter;
 import pro.dev.TGBotForShelter.model.Pet;
 import pro.dev.TGBotForShelter.model.Shelter;
 import pro.dev.TGBotForShelter.model.User;
 import pro.dev.TGBotForShelter.repository.AdopterRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Сервис для работы с усыновителями
@@ -26,8 +26,6 @@ public class AdopterService {
     private final ShelterService shelterService;
     private final PetService petService;
 
-
-
     /**
      * Создает нового усыновителя
      *
@@ -36,21 +34,29 @@ public class AdopterService {
      */
     @Transactional
     public Long createAdopter(Adopter adopter) {
+        // Получаем пользователя из сервиса
         User user = userService.getUser(adopter.getUser().getId());
 
+        // ✅ Исправленный вызов: используем правильный метод existsByUser
         if (adopterRepository.existsByUser(user)) {
             throw new IllegalArgumentException("Пользователь с id " + user.getId() + " уже является усыновителем");
         }
 
+        // Получаем приют
         Shelter shelter = shelterService.getShelter(adopter.getShelter().getId());
+
+        // Получаем питомца
         Pet pet = petService.getPet(adopter.getPet().getId());
 
-        adopter.setUser(user);
-        adopter.setShelter(shelter);
-        adopter.setPet(pet);
-        adopter.setAdoptionDate(LocalDateTime.now());
+        // Создаем новый объект adopter с правильными связями
+        Adopter newAdopter = new Adopter();
+        newAdopter.setUser(user);
+        newAdopter.setShelter(shelter);
+        newAdopter.setPet(pet);
+        newAdopter.setAdoptionDate(LocalDateTime.now());
 
-        Adopter savedAdopter = adopterRepository.save(adopter);
+        // Сохраняем
+        Adopter savedAdopter = adopterRepository.save(newAdopter);
         return savedAdopter.getId();
     }
 
@@ -61,8 +67,11 @@ public class AdopterService {
      * @return данные усыновителя
      */
     public Adopter getAdopter(Long id) {
-        return adopterRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Усыновитель с id " + id + " не найден"));
+        Optional<Adopter> adopter = adopterRepository.findById(id);
+        if (adopter.isEmpty()) {
+            throw new IllegalArgumentException("Усыновитель с id " + id + " не найден");
+        }
+        return adopter.get();
     }
 
     /**
@@ -72,8 +81,12 @@ public class AdopterService {
      * @return данные усыновителя
      */
     public Adopter getAdopterByUserId(Long userId) {
-        return adopterRepository.findByUserId(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Усыновитель для пользователя с id " + userId + " не найден"));
+        // ✅ Исправленный вызов: используем правильный метод findByUserId
+        Optional<Adopter> adopter = adopterRepository.findByUserId(userId);
+        if (adopter.isEmpty()) {
+            throw new IllegalArgumentException("Усыновитель для пользователя с id " + userId + " не найден");
+        }
+        return adopter.get();
     }
 
     /**
@@ -84,6 +97,7 @@ public class AdopterService {
      */
     public List<Adopter> getAllAdopters(Long shelterId) {
         if (shelterId != null) {
+            // ✅ Исправленный вызов: используем правильный метод
             return adopterRepository.findAllByShelterId(shelterId);
         }
         return adopterRepository.findAll();
@@ -97,6 +111,7 @@ public class AdopterService {
      */
     public List<Adopter> getRecentAdopters(int daysAgo) {
         LocalDateTime dateThreshold = LocalDateTime.now().minusDays(daysAgo);
+        // ✅ Исправленный вызов: используем правильный метод
         return adopterRepository.findAllByAdoptionDateAfter(dateThreshold);
     }
 
@@ -111,10 +126,13 @@ public class AdopterService {
     public Adopter updateAdopter(Long id, Adopter adopter) {
         Adopter existingAdopter = getAdopter(id);
 
+        // Обновляем питомца, если передан
         if (adopter.getPet() != null && adopter.getPet().getId() != null) {
             Pet pet = petService.getPet(adopter.getPet().getId());
             existingAdopter.setPet(pet);
         }
+
+        // TODO: добавить обновление других полей при необходимости
 
         return adopterRepository.save(existingAdopter);
     }
