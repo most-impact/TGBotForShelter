@@ -1,11 +1,12 @@
 package pro.dev.TGBotForShelter.repository;
 
-
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 import pro.dev.TGBotForShelter.model.Adopter;
 import pro.dev.TGBotForShelter.model.Shelter;
 import pro.dev.TGBotForShelter.model.User;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,39 +19,41 @@ import java.util.Optional;
 public interface AdopterRepository extends JpaRepository<Adopter, Long> {
 
     /**
-     * Находит усыновителя по пользователю
+     * Проверяет существование усыновителя для пользователя
      *
      * @param user пользователь
-     * @return усыновитель, если найден
+     * @return true, если усыновитель существует
      */
-    Optional<Adopter> findByUser(User user);
+    @Query("SELECT COUNT(a) > 0 FROM Adopter a WHERE a.user = :user")
+    boolean existsByUser(@Param("user") User user);
 
     /**
      * Находит усыновителя по ID пользователя
      *
-     * @param userId идентификатор пользователя
-     * @return усыновитель, если найден
+     * @param userId ID пользователя
+     * @return усыновитель или пустой Optional
      */
-    Optional<Adopter> findByUserId(Long userId);
-
-    /**
-     * Находит всех усыновителей по приюту
-     *
-     * @param shelter приют
-     * @return список усыновителей
-     */
-    List<Adopter> findAllByShelter(Shelter shelter);
+    @Query("SELECT a FROM Adopter a WHERE a.user.id = :userId")
+    Optional<Adopter> findByUserId(@Param("userId") Long userId);
 
     /**
      * Находит всех усыновителей по ID приюта
      *
-     * @param shelterId идентификатор приюта
+     * @param shelterId ID приюта
      * @return список усыновителей
      */
     List<Adopter> findAllByShelterId(Long shelterId);
 
     /**
-     * Находит усыновителей по дате усыновления после указанной даты
+     * Находит всех усыновителей по ID питомца
+     *
+     * @param petId ID питомца
+     * @return список усыновителей
+     */
+    List<Adopter> findAllByPetId(Long petId);
+
+    /**
+     * Находит усыновителей, усыновивших после указанной даты
      *
      * @param date дата
      * @return список усыновителей
@@ -58,7 +61,22 @@ public interface AdopterRepository extends JpaRepository<Adopter, Long> {
     List<Adopter> findAllByAdoptionDateAfter(LocalDateTime date);
 
     /**
-     * Находит усыновителей по дате усыновления в промежутке
+     * Находит усыновителей по приюту
+     *
+     * @param shelter приют
+     * @return список усыновителей
+     */
+    List<Adopter> findByShelter(Shelter shelter);
+
+    /**
+     * Находит всех активных усыновителей (с усыновлением)
+     *
+     * @return список усыновителей
+     */
+    List<Adopter> findByAdoptionDateIsNotNull();
+
+    /**
+     * Находит усыновителей за период
      *
      * @param startDate начальная дата
      * @param endDate конечная дата
@@ -67,10 +85,10 @@ public interface AdopterRepository extends JpaRepository<Adopter, Long> {
     List<Adopter> findAllByAdoptionDateBetween(LocalDateTime startDate, LocalDateTime endDate);
 
     /**
-     * Проверяет существование усыновителя по пользователю
+     * Проверяет существование усыновителя по ID
      *
-     * @param user пользователь
+     * @param id ID усыновителя
      * @return true, если усыновитель существует
      */
-    boolean existsByUser(User user);
+    boolean existsById(Long id);
 }
