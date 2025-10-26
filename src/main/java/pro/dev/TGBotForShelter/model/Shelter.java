@@ -1,62 +1,34 @@
+// model/Shelter.java
 package pro.dev.TGBotForShelter.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
-/**
- * Модель приюта для животных
- */
-@Entity
-@Table(name = "shelters")
-@Data
+@Getter @Setter @ToString
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Entity @Table(name = "shelters")
 public class Shelter {
-
-    /**
-     * Уникальный идентификатор приюта
-     */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
-    /**
-     * Тип приюта (для кошек или собак)
-     */
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Enumerated(EnumType.STRING) @Column(nullable = false)
     private ShelterType type;
 
-    /**
-     * Название приюта
-     */
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
-    /**
-     * Адрес приюта
-     */
     @Column(nullable = false)
     private String address;
 
-    /**
-     * Расписание работы
-     */
     @Column(length = 1000)
     private String schedule;
 
-    /**
-     * Контактные данные охраны
-     */
     private String securityContact;
 
-    /**
-     * Правила техники безопасности
-     */
     @Column(length = 2000)
     private String safetyRules;
 
-    /**
-     * Информация о приюте
-     */
     @Column(length = 2000)
     private String information;
 }
