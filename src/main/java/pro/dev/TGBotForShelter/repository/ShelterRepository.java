@@ -37,4 +37,6 @@ public interface ShelterRepository extends JpaRepository<Shelter, Long> {
      * @return true, если приют существует
      */
     boolean existsByType(ShelterType type);
+
+    Optional<Shelter> findByNameIgnoreCase(String name);
 }
