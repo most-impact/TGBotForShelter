@@ -11,11 +11,11 @@ import pro.dev.TGBotForShelter.service.ShelterService;
 public class DataInitConfig {
     @Bean CommandLineRunner seedShelters(ShelterService shelters) {
         return args -> {
-            if (shelters.all().isEmpty()) {
-                shelters.save(newShelter(ShelterType.DOG, "North Dogs",
+            if (shelters.getAllShelters().isEmpty()) {
+                shelters.createShelter(newShelter(ShelterType.DOG, "North Dogs",
                         "ул. Северная, 1","Пн-Пт 10:00–18:00","+7 900 000-00-01",
                         "Правила безопасности...","Приют для собак на севере."));
-                shelters.save(newShelter(ShelterType.CAT, "South Cats",
+                shelters.createShelter(newShelter(ShelterType.CAT, "South Cats",
                         "пр. Южный, 2","Ежедневно 11:00–17:00","+7 900 000-00-02",
                         "Не подносить животных к лицу...","Кошачий приют на юге."));
             }

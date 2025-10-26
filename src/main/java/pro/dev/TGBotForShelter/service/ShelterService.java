@@ -20,7 +20,9 @@ public class ShelterService {
 
     private final ShelterRepository shelterRepository;
 
-
+    public List<Shelter> findAll() {
+        return shelterRepository.findAll();
+    }
     /**
      * Создает новый приют
      *
@@ -116,4 +118,9 @@ public class ShelterService {
         }
         shelterRepository.deleteById(id);
     }
+    public List<Shelter> getAllShelters() {
+        return shelterRepository.findAll();
+    }
+
+
 }
